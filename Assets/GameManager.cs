@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/**
+ * Handles game events and modes.
+ * @author Christian Gunderman
+ */
 public class GameManager : MonoBehaviour {
 
 	public AudioClip deathSound;
