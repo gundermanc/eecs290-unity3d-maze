@@ -73,7 +73,7 @@ public class MonsterScript : MonoBehaviour {
 	}
 	
 	public void Hurt(float Amount, Vector3 PushDirection){
-		Debug.Log(PushDirection);
+		//Debug.Log(PushDirection);
 		health -= Amount;
 		OnScreenDisplay.PostMessage ("Hit!", Color.yellow);
 		rigidbody.AddForce(PushDirection * AttackKnockback);

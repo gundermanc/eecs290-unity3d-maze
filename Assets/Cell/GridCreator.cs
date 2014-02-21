@@ -21,7 +21,6 @@ public class GridCreator : MonoBehaviour {
 	public bool MMFullScreen = false;
 	public Material WallMat, FloorMat;
 	public static Transform GoalBlock;
-	public static float time_to_complete;
 	public float scaling;
 	public GameObject MMContainer;
 	public GameObject Monster;

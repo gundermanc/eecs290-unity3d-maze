@@ -20,7 +20,7 @@ public class CharacterScript : MonoBehaviour {
 		FlashLight.Injury ();
 		health -= damage;
 		OnScreenDisplay.SetHealthPoints ((int)health, false);
-		Debug.Log (health);
+		//Debug.Log (health);
 		if (health <= 0) {
 			Die();	
 		} else {
