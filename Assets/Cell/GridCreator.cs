@@ -86,7 +86,7 @@ public class GridCreator : MonoBehaviour {
 		border1.transform.tag = "Wall";
 		border1.parent = transform;
 		border2 = (Transform)Instantiate (CellPrefab, new Vector3(Size.x * scaling - 1f, 0, ((Size.z / 2) * scaling) - 1.5f), Quaternion.identity);
-		border2.localScale = new Vector3 (1, 5, scaling * Size.z);
+		border2.localScale = new Vector3 (1, 5, scaling * Size.z + 2f);
 		border2.GetComponentInChildren<TextMesh>().renderer.enabled = false;
 		border2.renderer.material = WallMat;
 		border2.transform.tag = "Wall";
@@ -97,8 +97,8 @@ public class GridCreator : MonoBehaviour {
 		border3.renderer.material = WallMat;
 		border3.transform.tag = "Wall";
 		border3.parent = transform;
-		border4 = (Transform)Instantiate(CellPrefab, new Vector3(-1, 0, ((Size.z / 2) * scaling) - 1.5f), Quaternion.identity);
-		border4.localScale = new Vector3 (1, 5, scaling * Size.z);
+		border4 = (Transform)Instantiate(CellPrefab, new Vector3(-2, 0, ((Size.z / 2) * scaling) - 1.5f), Quaternion.identity);
+		border4.localScale = new Vector3 (1, 5, scaling * Size.z + 2f);
 		border4.GetComponentInChildren<TextMesh>().renderer.enabled = false;
 		border4.renderer.material = WallMat;
 		border4.transform.tag = "Wall";
@@ -325,6 +325,10 @@ public class GridCreator : MonoBehaviour {
 				MMFullScreen = false;
 			}
 		}
+		if (GameManager.IsPaused()) 
+			Camera.main.depth = -1;
+		else
+			Camera.main.depth = 1;
 	}
 
 	/**

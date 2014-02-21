@@ -87,9 +87,8 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public static void EndGame() {
-		//time_to_complete = Time.timeSinceLevelLoad;
-		//mode = GameMode.EndGame;
-		GameObject.Find ("CutsceneCam").GetComponent<Cutscene>().StartScene();
+		if(GameObject.Find ("CutsceneCam").GetComponent<Cutscene>().time_to_complete == 0f)
+			GameObject.Find ("CutsceneCam").GetComponent<Cutscene>().StartScene();
 	}
 
 	public class OnDeathHandler : OnScreenDisplay.DeathCallback {

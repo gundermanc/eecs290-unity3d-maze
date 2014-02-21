@@ -10,7 +10,7 @@ public class Cutscene : MonoBehaviour {
 	private static bool animate;
 	private Vector3 start;
 	private Vector3 end;
-	private float time_to_complete;
+	public float time_to_complete;
 
 	// Use this for initialization
 	void Start () {
