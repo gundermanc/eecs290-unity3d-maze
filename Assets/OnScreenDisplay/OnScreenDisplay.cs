@@ -328,8 +328,8 @@ public class OnScreenDisplay : MonoBehaviour {
 		GUI.DrawTexture (batteryBarBackgroundRect, batteryBarBackgroundTexture);
 		
 		// draw battery bar
-		Debug.Log (batteryLife + "h");
-		Debug.Log ((int)(((float)batteryLife / 100) * batteryBarRect.width));
+		//Debug.Log (batteryLife + "h");
+		//Debug.Log ((int)(((float)batteryLife / 100) * batteryBarRect.width));
 		Rect scaledbatteryBarRect = new Rect (batteryBarRect.x, batteryBarRect.y, 
 		                                     (int)(((float)batteryLife / 100) * batteryBarRect.width),
 		                                      batteryBarRect.height);

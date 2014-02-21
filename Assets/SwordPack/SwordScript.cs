@@ -69,11 +69,11 @@ public class SwordScript : MonoBehaviour {
 		}
 		//Smoothly rotate sword down
 		if (HasAttacked == true && Time.timeSinceLevelLoad - SwipeTime < AttackSpeed/2f) {
-			transform.parent.localRotation = Quaternion.Slerp(new Quaternion(0.1f, 0f, 0.2f, 1f), new Quaternion(0.3f, 0f, 0.2f, 0.9f), (Time.timeSinceLevelLoad - SwipeTime)*2f/AttackSpeed);
+			transform.parent.localRotation = Quaternion.Slerp(new Quaternion(0.1f, 0f, 0.2f, 1f), new Quaternion(0.7f, 0f, 0.2f, 0.7f), (Time.timeSinceLevelLoad - SwipeTime)*2f/AttackSpeed);
 		}
 		//Smoothly rotate sword back
 		if (HasAttacked == true && Time.timeSinceLevelLoad - SwipeTime > AttackSpeed/2f) {
-			transform.parent.localRotation = Quaternion.Slerp(new Quaternion(0.3f, 0f, 0.2f, 0.9f), new Quaternion(0.1f, 0f, 0.2f, 1f), (Time.timeSinceLevelLoad - SwipeTime)*2f/AttackSpeed-1f);
+			transform.parent.localRotation = Quaternion.Slerp(new Quaternion(0.7f, 0f, 0.2f, 0.7f), new Quaternion(0.1f, 0f, 0.2f, 1f), (Time.timeSinceLevelLoad - SwipeTime)*2f/AttackSpeed-1f);
 		}
 	}
 

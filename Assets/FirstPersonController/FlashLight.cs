@@ -40,7 +40,7 @@ public class FlashLight : MonoBehaviour {
 		float sinceLastUpdate = (float)(DateTime.Now.Subtract (lastUpdate).TotalSeconds);
 
 		// set new life
-		Debug.Log (batteryLife);
+		//Debug.Log (batteryLife);
 		UpdateBattery ((dieRate * sinceLastUpdate), true);
 		OnScreenDisplay.SetBatteryLife ((int)batteryLife, false);
 
