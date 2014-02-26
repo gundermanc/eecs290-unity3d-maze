@@ -25,6 +25,8 @@ public class GridCreator : MonoBehaviour {
 	public GameObject MMContainer;
 	public GameObject Monster;
 	public GameObject Monsters;
+	public GameObject MonsterSpawner;
+	public float SpawnerOffset;
 	public int MonsterSpawnProb;
 	public GameObject PowerUps;
 	public GameObject Battery;
@@ -34,6 +36,7 @@ public class GridCreator : MonoBehaviour {
 	public float monsterStartingDistance = 5;
 
 	private int DiceRoll;
+	private float SpawnTimeCount = 3;
 
 	// Use this for initialization
 	void Start () {
@@ -263,20 +266,24 @@ public class GridCreator : MonoBehaviour {
 		} while (next.GetComponent<CellScript>().AdjacentsOpened >= 2);	// This keeps the walls in the grid, otherwise Prim's Algorithm would just visit every cell
 
 		// GOT SOME JOHN HACKS GOING ON RIGHT HERE!!!! ###################################################################
-		DiceRoll = Random.Range(0,100);
-		GameObject NextMonster;
-		Vector3 location = new Vector3(next.transform.localPosition.x, 3f, next.transform.localPosition.z);
 
-		// check probability of monster spawn AND CHRISTIAN's Monster distance from starting position.
-		// this prevents you from being mobbed at start
-		Vector3 startingPos = new Vector3 (0, 0, 0);
 
-		if((DiceRoll > (100 - MonsterSpawnProb))
-		   && Vector3.Distance(location, startingPos) >= monsterStartingDistance
-		   && !lineOfSight(location, startingPos)) {
-			NextMonster = Instantiate(Monster, location, Quaternion.identity) as GameObject;
-			NextMonster.transform.parent = Monsters.transform;
-		} else {
+
+		// If the level loaded is level 0 then the bonus level has been loaded so we need monster spawners everywhere
+		if(Application.loadedLevelName == "Bonus"){
+			GameObject NextMonsterSpawner;
+			Vector3 location = new Vector3(next.transform.localPosition.x, 5f, next.transform.localPosition.z);
+			NextMonsterSpawner = Instantiate(MonsterSpawner, location, Quaternion.identity) as GameObject;
+			// This is used so all the spawners do not spawn monsters simultaneously, which causes game slowdown
+			NextMonsterSpawner.GetComponent<MonsterSpawnerScript>().SetTimeAtLastSpawn(SpawnTimeCount);
+			// This is just to reset the counter every once in a while
+			if(SpawnTimeCount > SpawnerOffset * 10f){
+				SpawnTimeCount = SpawnerOffset;
+			} else {
+				SpawnTimeCount += SpawnerOffset;
+			}
+			NextMonsterSpawner.transform.parent = Monsters.transform;
+			// This code was coppied and pasted so if we have time we should call a method or something
 			DiceRoll = Random.Range(0,100);
 			GameObject NextBattery;
 			if(DiceRoll > (100 - BatterySpawnProb)){
@@ -288,6 +295,36 @@ public class GridCreator : MonoBehaviour {
 				if(DiceRoll > (100 - MedpackSpwanProb)){
 					NextMedpack = Instantiate(Medpack, next.transform.position, Quaternion.identity) as GameObject;
 					NextMedpack.transform.parent = PowerUps.transform;
+				}
+			}
+			// Else we are in a normal level so we will load everything normally
+		} else {
+			DiceRoll = Random.Range(0,100);
+			GameObject NextMonster;
+			Vector3 location = new Vector3(next.transform.localPosition.x, 3f, next.transform.localPosition.z);
+
+			// check probability of monster spawn AND CHRISTIAN's Monster distance from starting position.
+			// this prevents you from being mobbed at start
+			Vector3 startingPos = new Vector3 (0, 0, 0);
+
+			if((DiceRoll > (100 - MonsterSpawnProb))
+			   && Vector3.Distance(location, startingPos) >= monsterStartingDistance
+			   && !lineOfSight(location, startingPos)) {
+				NextMonster = Instantiate(Monster, location, Quaternion.identity) as GameObject;
+				NextMonster.transform.parent = Monsters.transform;
+			} else {
+				DiceRoll = Random.Range(0,100);
+				GameObject NextBattery;
+				if(DiceRoll > (100 - BatterySpawnProb)){
+					NextBattery = Instantiate(Battery, next.transform.position, Quaternion.identity) as GameObject;
+					NextBattery.transform.parent = PowerUps.transform;
+				} else {
+					DiceRoll = Random.Range(0,100);
+					GameObject NextMedpack;
+					if(DiceRoll > (100 - MedpackSpwanProb)){
+						NextMedpack = Instantiate(Medpack, next.transform.position, Quaternion.identity) as GameObject;
+						NextMedpack.transform.parent = PowerUps.transform;
+					}
 				}
 			}
 		}
@@ -344,4 +381,5 @@ public class GridCreator : MonoBehaviour {
 		}
 		return false;
 	}
+	
 }
