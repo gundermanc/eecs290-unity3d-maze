@@ -56,6 +56,10 @@ public class CharacterScript : MonoBehaviour {
 		health = 100;
 	}
 
+	public void AddAmmo(int ammo_to_add){
+		ammo += ammo_to_add;
+	}
+
 	public void Die(){
 		GameManager.PlayerDied ();
 	}

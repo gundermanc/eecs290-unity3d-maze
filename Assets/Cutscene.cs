@@ -35,6 +35,14 @@ public class Cutscene : MonoBehaviour {
 
 	}
 
+	public void EndScene(){
+		cam.depth = -1;
+		RenderSettings.fog = true;
+		animate = false;
+		GameObject.Find ("Directional light").light.intensity = 0f;
+		time_to_complete = 0f;
+	}
+
 	// Update is called once per frame
 	void Update () {
 		if (animate) {
