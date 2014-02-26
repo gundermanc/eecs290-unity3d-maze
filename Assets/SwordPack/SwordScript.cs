@@ -55,10 +55,14 @@ public class SwordScript : MonoBehaviour {
 			Hit = false;
 			HasAttacked = true;
 			if (sword_inside_monster) {
-				Attack();
-				audio.Stop();
-				audio.PlayOneShot(Hit1);
-			} else {
+				if (Enemy == null)
+					sword_inside_monster = false;
+				else{
+					Attack();
+					//audio.Stop();
+					//audio.PlayOneShot(Hit1);
+				}
+			} if(!sword_inside_monster) {
 				audio.Stop();
 				audio.PlayOneShot(Miss);
 			}
@@ -81,6 +85,8 @@ public class SwordScript : MonoBehaviour {
 		if(Enemy != null) {
 			Enemy.transform.GetComponent<MonsterScript>().Hurt(Damage, transform.forward);
 			Hit = true;
+			audio.Stop();
+			audio.PlayOneShot(Hit1);
 		}
 	}
 }

@@ -295,7 +295,7 @@ public class OnScreenDisplay : MonoBehaviour {
 		// restart game button
 		screenDimensions.y += 150;
 		screenDimensions.yMax = screenDimensions.y + 75;
-		if (GUI.Button (screenDimensions, "<size=30>Restart Game</size>")) {
+		if (GUI.Button (screenDimensions, "<size=30>Next Level</size>")) {
 			
 			// this works...just not in the editor. you have to actually build the project first
 			Application.LoadLevel(0);
