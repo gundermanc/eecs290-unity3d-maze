@@ -20,7 +20,6 @@ public class Cutscene : MonoBehaviour {
 	}
 
 	public void StartScene(){
-		Debug.Log ("Here");
 		float x = GameObject.Find ("Grid").GetComponent<GridCreator> ().Size.x;
 		float z = GameObject.Find ("Grid").GetComponent<GridCreator> ().Size.z;
 		//float scaling = GameObject.Find ("Grid").GetComponent<GridCreator> ().scaling;
