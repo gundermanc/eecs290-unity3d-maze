@@ -11,16 +11,19 @@ public class Cutscene : MonoBehaviour {
 	private Vector3 start;
 	private Vector3 end;
 	public float time_to_complete;
+	public float AnimationStartTime;
+	public bool HasFinished;
 
 	// Use this for initialization
 	void Start () {
 		cam = GameObject.Find ("CutsceneCam").GetComponent<Camera> ();
 		time_to_complete = 0f;
+		HasFinished = false;
+		AnimationStartTime = 0f;
 		//cam.orthographicSize = Mathf.Max(x * scaling * 0.55f, z * scaling * 0.5f);
 	}
 
 	public void StartScene(){
-		Debug.Log ("Here");
 		float x = GameObject.Find ("Grid").GetComponent<GridCreator> ().Size.x;
 		float z = GameObject.Find ("Grid").GetComponent<GridCreator> ().Size.z;
 		//float scaling = GameObject.Find ("Grid").GetComponent<GridCreator> ().scaling;
@@ -40,6 +43,17 @@ public class Cutscene : MonoBehaviour {
 	void Update () {
 		if (animate) {
 			cam.transform.position = Vector3.Slerp(start, end, (Time.timeSinceLevelLoad - time_to_complete)/time_to_zoom);
+			if(AnimationStartTime == 0f){
+				AnimationStartTime = Time.time;
+			}
+			HasFinished = true;
+			Debug.Log("Load Time" + Time.timeSinceLevelLoad);
+			Debug.Log("Animation" + AnimationStartTime);
+		}
+		if(Time.timeSinceLevelLoad - AnimationStartTime > time_to_zoom && HasFinished){
+			Application.LoadLevel("Bonus");
+			animate = false;
+			HasFinished = false;
 		}
 	}
 }
