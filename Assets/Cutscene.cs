@@ -20,7 +20,6 @@ public class Cutscene : MonoBehaviour {
 	}
 
 	public void StartScene(){
-		Debug.Log ("Here");
 		float x = GameObject.Find ("Grid").GetComponent<GridCreator> ().Size.x;
 		float z = GameObject.Find ("Grid").GetComponent<GridCreator> ().Size.z;
 		//float scaling = GameObject.Find ("Grid").GetComponent<GridCreator> ().scaling;
@@ -34,6 +33,14 @@ public class Cutscene : MonoBehaviour {
 		RenderSettings.fog = false;
 		cam.depth = 10;
 
+	}
+
+	public void EndScene(){
+		cam.depth = -1;
+		RenderSettings.fog = true;
+		animate = false;
+		GameObject.Find ("Directional light").light.intensity = 0f;
+		time_to_complete = 0f;
 	}
 
 	// Update is called once per frame

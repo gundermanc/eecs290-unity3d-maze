@@ -75,7 +75,10 @@ public class GameManager : MonoBehaviour {
 
 		// reset flashlight value
 		FlashLight.UpdateBattery (100, false);
-		
+
+		// Switch camera to player view
+		GameObject.Find ("CutsceneCam").GetComponent<Cutscene> ().EndScene ();
+
 		// set game mode
 		mode = GameMode.StartMenu;
 	}
@@ -87,8 +90,10 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public static void EndGame() {
-		if(GameObject.Find ("CutsceneCam").GetComponent<Cutscene>().time_to_complete == 0f)
-			GameObject.Find ("CutsceneCam").GetComponent<Cutscene>().StartScene();
+		if (GameObject.Find ("CutsceneCam").GetComponent<Cutscene> ().time_to_complete == 0f) {
+			GameObject.Find ("CutsceneCam").GetComponent<Cutscene> ().StartScene ();
+			mode = GameMode.EndGame;
+		}
 	}
 
 	public class OnDeathHandler : OnScreenDisplay.DeathCallback {
