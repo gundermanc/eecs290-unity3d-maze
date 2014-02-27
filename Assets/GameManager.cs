@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour {
 	// singleton, save the instance
 	private static GameManager instance;
 	private static GameMode mode;
-	private static int level = 5;
+	private static int level = 0;
 
 	// an array of levels..add new ones to make the game more exciting
 	private static LevelParams[] levels = {
