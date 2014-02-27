@@ -3,8 +3,11 @@ using System.Collections;
 
 public class ProjectileScript : MonoBehaviour {
 
+	//Knife is active until it stops moving. When inactive, they can't hurt monsters and can be picked back up
 	private bool active;
+	//The knife's trigger collider
 	private CapsuleCollider col;
+	//Timestamp of when the knife was created
 	private float time_made;
 
 	// Use this for initialization
