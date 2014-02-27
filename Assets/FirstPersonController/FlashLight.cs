@@ -10,7 +10,7 @@ public class FlashLight : MonoBehaviour {
 	// sets the flashlight rundown percentage, per second
 	private static int dieRate = -2;
 	// flashlight life percentage
-	private static float batteryLife = 100;
+	private static float batteryLife;
 	private static FlashLight instance;
 	// stores the time of the last update operation
 	private static DateTime lastUpdate = DateTime.Now;
@@ -21,6 +21,7 @@ public class FlashLight : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		instance = this;
+		batteryLife = 100f;
 	}
 	
 	// Update is called once per frame

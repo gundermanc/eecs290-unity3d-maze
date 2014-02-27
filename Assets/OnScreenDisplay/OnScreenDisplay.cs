@@ -25,6 +25,8 @@ public class OnScreenDisplay : MonoBehaviour {
 
 	// private constants
 	private const string welcomeMessage = "Will you roast the ghosts... or be squished to death by white fluffiness?";
+	private const string instructions1 = "Left click to swing your sword, right click throw throwing knives";
+	private const string instructions2 = "Press Esc to pause and M to view the minimap fullscreen.";
 	private const int pauseMenuMargins = 70;
 	private const int shadowOffset = -3;
 
@@ -265,8 +267,7 @@ public class OnScreenDisplay : MonoBehaviour {
 		DrawLabelWithShadow (screenDimensions, "<size=25><i>" 
 		                     + String.Format(welcomeMessage, message) + "</i></size>");
 
-		
-		screenDimensions.y += 150;
+		screenDimensions.y += 100;
 		screenDimensions.yMax = screenDimensions.y + 75;
 		
 		// exit game button
@@ -275,6 +276,14 @@ public class OnScreenDisplay : MonoBehaviour {
 			// this works...just not in the editor. you have to actually build the project first
 			GameManager.StartGame();
 		}
+
+		
+		screenDimensions.y += 100;
+		DrawLabelWithShadow (screenDimensions, "<size=15><i>" 
+		                     + String.Format(instructions1, message) + "</i></size>");
+		screenDimensions.y += 50;
+		DrawLabelWithShadow (screenDimensions, "<size=15><i>" 
+		                     + String.Format(instructions2, message) + "</i></size>");
 	}
 
 	private void DrawWinScreen() {

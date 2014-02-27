@@ -52,6 +52,10 @@ public class CharacterScript : MonoBehaviour {
 		}
 	}
 
+	public int GetHealth(){
+		return(health);
+	}
+
 	public void ResetHealth() {
 		health = 100;
 	}
