@@ -22,10 +22,10 @@ public class Cutscene : MonoBehaviour {
 	public void StartScene(){
 		float x = GameObject.Find ("Grid").GetComponent<GridCreator> ().Size.x;
 		float z = GameObject.Find ("Grid").GetComponent<GridCreator> ().Size.z;
-		//float scaling = GameObject.Find ("Grid").GetComponent<GridCreator> ().scaling;
-		start = GameObject.Find ("Grid").GetComponent<GridCreator> ().Grid[(int)(x / 2f),(int)(z / 2f)].GetComponent<CellScript>().Position + (Vector3.up * 20f);
+		float scaling = GameObject.Find ("Grid").GetComponent<GridCreator> ().scaling;
+		start = new Vector3(x*scaling/2f, 20f, z*scaling/2f);
+			//GameObject.Find ("Grid").GetComponent<GridCreator> ().Grid[(int)(x / 2f),(int)(z / 2f)].GetComponent<CellScript>().Position + (Vector3.up * 20f);
 		end = start + 20*Vector3.up;
-		//Debug.Log (cam.enabled);
 		cam.transform.position = start;
 		time_to_complete = Time.timeSinceLevelLoad;
 		GameObject.Find ("Directional light").light.intensity = 0.5f;

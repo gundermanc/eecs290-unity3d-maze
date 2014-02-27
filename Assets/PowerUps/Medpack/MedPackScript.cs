@@ -8,8 +8,10 @@ public class MedPackScript : MonoBehaviour {
 	
 	void OnTriggerEnter(Collider Target){
 		if(Target.collider.tag == "Player"){
-			Target.transform.GetComponentInChildren<CharacterScript>().Heal(HealingFactor);
-			Destroy(this.gameObject);
+			if(Target.GetComponent<CharacterScript>().GetHealth() != 100){
+				Target.transform.GetComponentInChildren<CharacterScript>().Heal(HealingFactor);
+				Destroy(this.gameObject);
+			}
 		}
 	}
 	
