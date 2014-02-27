@@ -117,7 +117,7 @@ public class GameManager : MonoBehaviour {
 	public static void PlayerDied() {
 		instance.audio.Stop ();
 		instance.audio.PlayOneShot (instance.deathSound);
-		RestartGame ();
+		mode = GameMode.Dead;
 	}
 
 	public static void EndLevel() {

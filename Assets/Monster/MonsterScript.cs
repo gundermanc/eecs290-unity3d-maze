@@ -30,6 +30,10 @@ public class MonsterScript : MonoBehaviour {
 	}
 	
 	void Update () {
+		if(GameManager.IsPaused()) {
+			return;
+		}
+
 		if(MouthOpen && Time.timeSinceLevelLoad - last_attack > .3f){
 			MouthTransform.Rotate(-30f,0f,0f);
 			MouthOpen = false;

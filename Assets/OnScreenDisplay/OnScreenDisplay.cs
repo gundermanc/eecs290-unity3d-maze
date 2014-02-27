@@ -91,8 +91,8 @@ public class OnScreenDisplay : MonoBehaviour {
 			DrawGameStart(gameTitle);
 			break;
 		case GameManager.GameMode.Dead:
-			DrawGameStart("You Died!");
 			DrawBloodDecals ();
+			DrawWinScreen("You died you <b>SCRUB!</b>");
 			break;
 		case GameManager.GameMode.UnPaused:
 			DrawHUD();
@@ -101,7 +101,7 @@ public class OnScreenDisplay : MonoBehaviour {
 			DrawWinLevelScreen();
 			break;
 		case GameManager.GameMode.EndGame:
-			DrawWinScreen();
+			DrawWinScreen("Congratulations! You beat all of the levels.");
 			break;
 		}
 	}
@@ -359,7 +359,7 @@ public class OnScreenDisplay : MonoBehaviour {
 		}
 	}
 
-	private void DrawWinScreen() {
+	private void DrawWinScreen(string message) {
 		
 		// create a label GUI style that is centered
 		GUIStyle centeredStyle = GUI.skin.GetStyle ("Label");
@@ -370,7 +370,7 @@ public class OnScreenDisplay : MonoBehaviour {
 		                                  Screen.width - (2 * pauseMenuMargins),
 		                                  Screen.height- (2 * pauseMenuMargins));
 
-		DrawLabelWithShadow (screenDimensions, "<size=40><i>" +  "Congratulations! You beat all of the levels." 
+		DrawLabelWithShadow (screenDimensions, "<size=40><i>" +  message
 		                    + "</i></size>");
 		
 		
