@@ -15,10 +15,15 @@ public class OnScreenDisplay : MonoBehaviour {
 	private Rect healthBarRect;					// the rectangle which the FULL health bar will occupy
 	private Rect healthBarBackgroundRect;		// the rectangle which the empty health bar will occupy
 
-	public Texture batteryBarTexture;			// the texture file to use for the health bar
-	public Texture batteryBarBackgroundTexture;	// the texture for the background of the empty health bar
-	private Rect batteryBarRect;					// the rectangle which the FULL health bar will occupy
-	private Rect batteryBarBackgroundRect;		// the rectangle which the empty health bar will occupy
+	public Texture ammoBarTexture;				// the texture file to use for the ammo bar
+	public Texture ammoBarBackgroundTexture;	// the texture for the background of the empty ammo bar
+	private Rect ammoBarRect;					// the rectangle which the FULL ammo bar will occupy
+	private Rect ammoBarBackgroundRect;			// the rectangle which the empty ammo bar will occupy
+
+	public Texture batteryBarTexture;			// the texture file to use for the battery bar
+	public Texture batteryBarBackgroundTexture;	// the texture for the background of the empty battery bar
+	private Rect batteryBarRect;				// the rectangle which the FULL battery bar will occupy
+	private Rect batteryBarBackgroundRect;		// the rectangle which the empty battery bar will occupy
 	public int messageDisplayTime = 5;			// the number of seconds to display a message
 	public Texture bloodDecalsTexture;
 	private const string gameTitle = "Marshmallow Madness";
@@ -26,10 +31,12 @@ public class OnScreenDisplay : MonoBehaviour {
 	// private constants
 	private const string welcomeMessage = "Will you roast the ghosts... or be squished to death by white fluffiness?";
 	private const int pauseMenuMargins = 70;
-	private const int shadowOffset = -3;
+	private const int shadowOffset = -2;
 
 	// private fields
 	private int healthPoints = 100;
+	private int ammoCount = 100;
+	private int maxAmmoCount = 100;
 	private int batteryLife = 100;
 	private LinkedList<Message> messageQueue;
 
@@ -49,12 +56,21 @@ public class OnScreenDisplay : MonoBehaviour {
 		healthBarBackgroundRect.width = 160;
 		healthBarBackgroundRect.height = 35;
 
+		ammoBarRect.x = 17;
+		ammoBarRect.y = 65;
+		ammoBarRect.width = 155; 
+		ammoBarRect.height = 25;
+		ammoBarBackgroundRect.x = 15;
+		ammoBarBackgroundRect.y = 60;
+		ammoBarBackgroundRect.width = 160;
+		ammoBarBackgroundRect.height = 35;
+
 		batteryBarRect.x = 17;
-		batteryBarRect.y = 65;
+		batteryBarRect.y = 110;
 		batteryBarRect.width = 155; 
 		batteryBarRect.height = 25;
 		batteryBarBackgroundRect.x = 15;
-		batteryBarBackgroundRect.y = 60;
+		batteryBarBackgroundRect.y = 105;
 		batteryBarBackgroundRect.width = 160;
 		batteryBarBackgroundRect.height = 35;
 		// class is a singleton. save a static reference
@@ -78,6 +94,9 @@ public class OnScreenDisplay : MonoBehaviour {
 			break;
 		case GameManager.GameMode.UnPaused:
 			DrawHUD();
+			break;
+		case GameManager.GameMode.EndLevel:
+			DrawWinLevelScreen();
 			break;
 		case GameManager.GameMode.EndGame:
 			DrawWinScreen();
@@ -134,6 +153,24 @@ public class OnScreenDisplay : MonoBehaviour {
 
 			instance.deathCallback.PlayerDied();
 		}
+	}
+
+	/**
+	 * Sets the ammo count values in the onscreen display.
+	 * @param ammo A value between 0 and 100
+	 * @param addToExistingValue If true, the function adds healthPoints to
+	 * the existing health points. If false, the old value is thrown out and
+	 * replaced with the new value.
+	 */
+	public static void SetAmmoCount(int ammo) {
+		if(ammo < 0 || ammo > instance.maxAmmoCount) {
+			Debug.LogError("Invalid OSD ammo values.");
+		}
+		instance.ammoCount = ammo;
+	}
+
+	public static void SetMaxAmmoCount(int maxAmmoCount) {
+		instance.maxAmmoCount = maxAmmoCount;
 	}
 
 	/**
@@ -195,8 +232,10 @@ public class OnScreenDisplay : MonoBehaviour {
 		regularStyle.alignment = TextAnchor.UpperLeft;
 
 		DrawHealthBar ();
+		DrawAmmoBar ();
 		DrawBatteryBar ();
 		DrawMessages ();
+		DrawLevelName ();
 	}
 
 	private void DrawBloodDecals() {
@@ -277,7 +316,7 @@ public class OnScreenDisplay : MonoBehaviour {
 		}
 	}
 
-	private void DrawWinScreen() {
+	private void DrawWinLevelScreen() {
 		
 		// create a label GUI style that is centered
 		GUIStyle centeredStyle = GUI.skin.GetStyle ("Label");
@@ -287,8 +326,10 @@ public class OnScreenDisplay : MonoBehaviour {
 		Rect screenDimensions = new Rect (pauseMenuMargins, pauseMenuMargins, 
 		                                  Screen.width - (2 * pauseMenuMargins),
 		                                  Screen.height- (2 * pauseMenuMargins));
-		
-		DrawLabelWithShadow (screenDimensions, "<size=40><i>" +  "You Win!"  +"</i></size>");
+
+		GameManager.LevelParams LevelParams = GameManager.GetCurrentLevelParams();
+		DrawLabelWithShadow (screenDimensions, "<size=40><i>" +  "Completed Level: " 
+		                     + LevelParams.LevelName + "</i></size>");
 		
 
 		
@@ -297,8 +338,7 @@ public class OnScreenDisplay : MonoBehaviour {
 		screenDimensions.yMax = screenDimensions.y + 75;
 		if (GUI.Button (screenDimensions, "<size=30>Next Level</size>")) {
 			
-			// this works...just not in the editor. you have to actually build the project first
-			Application.LoadLevel(0);
+			GameManager.NextLevel();
 		}
 
 		screenDimensions.y += 150;
@@ -310,6 +350,57 @@ public class OnScreenDisplay : MonoBehaviour {
 		}
 	}
 
+	private void DrawWinScreen() {
+		
+		// create a label GUI style that is centered
+		GUIStyle centeredStyle = GUI.skin.GetStyle ("Label");
+		centeredStyle.alignment = TextAnchor.UpperCenter;
+		
+		// get pause menu rectange, minus the margins specified in the constant pauseMenuMargins
+		Rect screenDimensions = new Rect (pauseMenuMargins, pauseMenuMargins, 
+		                                  Screen.width - (2 * pauseMenuMargins),
+		                                  Screen.height- (2 * pauseMenuMargins));
+
+		DrawLabelWithShadow (screenDimensions, "<size=40><i>" +  "Congratulations! You beat all of the levels." 
+		                    + "</i></size>");
+		
+		
+		
+		// restart game button
+		screenDimensions.y += 150;
+		screenDimensions.yMax = screenDimensions.y + 75;
+		if (GUI.Button (screenDimensions, "<size=30>Restart Game</size>")) {
+			
+			GameManager.RestartGame();
+		}
+		
+		screenDimensions.y += 150;
+		screenDimensions.yMax = screenDimensions.y + 75;
+		if (GUI.Button (screenDimensions, "<size=30>Quit Game</size>")) {
+			
+			// this works...just not in the editor. you have to actually build the project first
+			Application.Quit();
+		}
+	}
+
+	private void DrawLevelName() {
+		
+		// create a label GUI style that is centered
+		GUI.color = Color.white;
+		GUIStyle centeredStyle = GUI.skin.GetStyle ("Label");
+		centeredStyle.alignment = TextAnchor.UpperCenter;
+		
+		// get pause menu rectange, minus the margins specified in the constant pauseMenuMargins
+		Rect screenDimensions = new Rect (15, 15, 
+		                                  Screen.width - (2 * 15),
+		                                  Screen.height- (2 * 15));
+		
+		GameManager.LevelParams LevelParams = GameManager.GetCurrentLevelParams();
+		DrawLabelWithShadow (screenDimensions, "<size=30><i>Level: " 
+		                     + LevelParams.LevelName + "</i></size>");
+	}
+
+
 	private void DrawHealthBar() {
 
 		// draw background
@@ -320,6 +411,13 @@ public class OnScreenDisplay : MonoBehaviour {
 		                                     (int)(((float)healthPoints / 100) * healthBarRect.width),
 		                                     healthBarRect.height);
 		GUI.DrawTexture (scaledHealthBarRect, healthBarTexture);
+
+		// draw text
+		GUI.color = Color.black;
+		GUIStyle centeredStyle = GUI.skin.GetStyle ("Label");
+		centeredStyle.alignment = TextAnchor.MiddleCenter;
+		GUI.Label (healthBarRect, "<b>" + healthPoints + "HP</b>");
+		GUI.color = Color.white;
 	}
 
 	private void DrawBatteryBar() {
@@ -328,17 +426,43 @@ public class OnScreenDisplay : MonoBehaviour {
 		GUI.DrawTexture (batteryBarBackgroundRect, batteryBarBackgroundTexture);
 		
 		// draw battery bar
-		//Debug.Log (batteryLife + "h");
-		//Debug.Log ((int)(((float)batteryLife / 100) * batteryBarRect.width));
 		Rect scaledbatteryBarRect = new Rect (batteryBarRect.x, batteryBarRect.y, 
 		                                     (int)(((float)batteryLife / 100) * batteryBarRect.width),
 		                                      batteryBarRect.height);
 		GUI.DrawTexture (scaledbatteryBarRect, batteryBarTexture);
+
+		// draw text
+		GUI.color = Color.black;
+		GUIStyle centeredStyle = GUI.skin.GetStyle ("Label");
+		centeredStyle.alignment = TextAnchor.MiddleCenter;
+		GUI.Label (batteryBarRect, "<b>" + batteryLife + "% Battery</b>");
+		GUI.color = Color.white;
+	}
+
+	private void DrawAmmoBar() {
+		
+		// draw background
+		GUI.DrawTexture (ammoBarBackgroundRect, ammoBarBackgroundTexture);
+		
+		// draw battery bar
+		Rect scaledAmmoBarRect = new Rect (ammoBarRect.x, ammoBarRect.y, 
+		                                      (int)(((float)ammoCount / maxAmmoCount) * ammoBarRect.width),
+		                                      ammoBarRect.height);
+		GUI.DrawTexture (scaledAmmoBarRect, ammoBarTexture);
+
+		// draw text
+		GUI.color = Color.black;
+		GUIStyle centeredStyle = GUI.skin.GetStyle ("Label");
+		centeredStyle.alignment = TextAnchor.MiddleCenter;
+		GUI.Label (ammoBarRect, "<b>" + ammoCount + " Throwing Knives</b>");
+		GUI.color = Color.white;
 	}
 
 	private void DrawMessages() {
-		float y = 100;
+		float y = 150;
 
+		GUIStyle upperLeft = GUI.skin.GetStyle ("Label");
+		upperLeft.alignment = TextAnchor.UpperLeft;
 		foreach(Message m in messageQueue) {
 			GUI.color = m.color;
 			GUI.Label (new Rect (10, y += 20, 1000, 1000),

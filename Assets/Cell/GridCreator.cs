@@ -15,28 +15,47 @@ using System.Collections.Generic;
 public class GridCreator : MonoBehaviour {
 	
 	public Transform CellPrefab;
-	public Vector3 Size;
 	public Transform[,] Grid;
 	public static Transform[,] MiniMap;
 	public bool MMFullScreen = false;
-	public Material WallMat, FloorMat;
 	public static Transform GoalBlock;
-	public float scaling;
 	public GameObject MMContainer;
 	public GameObject Monster;
 	public GameObject Monsters;
-	public int MonsterSpawnProb;
 	public GameObject PowerUps;
 	public GameObject Battery;
-	public int BatterySpawnProb;
 	public GameObject Medpack;
-	public int MedpackSpwanProb;
+
 	public float monsterStartingDistance = 5;
+
+	// part of the leveling system
+	public Vector3 Size;
+	public int MedpackSpwanProb;
+	public int BatterySpawnProb;
+	public Material WallMat, FloorMat;
+	public int MonsterSpawnProb;
+	public float scaling;
 
 	private int DiceRoll;
 
 	// Use this for initialization
 	void Start () {
+
+		// set params from game manager
+		GameManager.LevelParams levelParams = GameManager.GetCurrentLevelParams ();
+		Size = new Vector3 (levelParams.Width, 1, levelParams.Length);
+		MedpackSpwanProb = levelParams.MedpackSpawnProb;
+		BatterySpawnProb = levelParams.BatterySpawnProb;
+		MonsterSpawnProb = levelParams.MonsterSpawnProb;
+
+		if(levelParams.WallMat != null) {
+			WallMat = levelParams.WallMat;
+		}
+
+		if(levelParams.FloorMat != null) {
+			FloorMat = levelParams.FloorMat;
+		}
+
 		CreateGrid();
 		SetRandomNumbers();
 		SetAdjacents();
@@ -304,7 +323,7 @@ public class GridCreator : MonoBehaviour {
 	}
 
 	public static void MazeComplete(){
-		GameManager.EndGame ();
+		GameManager.EndLevel ();
 	}
 
 	// Called once per frame.

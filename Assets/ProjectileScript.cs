@@ -32,6 +32,7 @@ public class ProjectileScript : MonoBehaviour {
 		//Pick up used sword
 		if (Target.collider.tag == "Player" && !active) {
 			GameObject.Find("First Person Controller").GetComponent<CharacterScript>().AddAmmo(1);
+			OnScreenDisplay.PostMessage("Picked up 1 Throwing Knife", Color.green);
 			Destroy(gameObject);
 		}
 	}

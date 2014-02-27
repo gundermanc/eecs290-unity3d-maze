@@ -25,7 +25,7 @@ public class CellScript : MonoBehaviour {
 	}
 	
 	void OnTriggerEnter(Collider Target){
-		if(Target.tag == "Player"){
+		if(Target != null && Target.tag == "Player"){
 			IsPlayer = true;
 			Transform mmCell = GridCreator.MiniMap[(int) (gameObject.transform.position.x/scaling), (int) (gameObject.transform.position.z/scaling)];
 			mmCell.renderer.material.color = Color.red;
