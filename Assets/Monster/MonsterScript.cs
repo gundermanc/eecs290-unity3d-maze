@@ -33,11 +33,6 @@ public class MonsterScript : MonoBehaviour {
 	void Start(){
 		last_attack = 0f;
 		target = GameObject.Find("First Person Controller");
-		//lineRender = gameObject.AddComponent<LineRenderer>();
-		//lineRender.material = new Material(Shader.Find("Particles/Additive"));
-		//lineRender.SetColors(c1,c2);
-		//lineRender.SetWidth(0.2f, 0.2f);
-		//lineRender.SetVertexCount(2);
 		MouthTransform = transform.Find("Mouth/MouthBottom");
 	}
 
@@ -80,8 +75,8 @@ public class MonsterScript : MonoBehaviour {
 
 	/**
 	 * This is the attack Method for the monster
-	 * It is called when the player collider enters the monster collider
-	 * It 
+	 * It is called when the player collider is within the attack_dist range to issue an attack to the player
+	 * calls the Harm method in the CharacterScript to apply a damage of monster power value to the player
 	 */
 	private void Attack(){
 		if (Time.timeSinceLevelLoad - last_attack > attack_reload_time) {
@@ -91,16 +86,26 @@ public class MonsterScript : MonoBehaviour {
 			MouthOpen = true;
 		}
 	}
-	
+
+	/**
+	 * When the monster is not within visible range of the player it goes into "patrol" mode and calls this function
+	 * When in patrol mode a force is added to the monster in the direction of the player
+	 * @param the object that was hit by the monster raycast
+	 */
 	private void Patrol(RaycastHit SeenObject){
 		rigidbody.AddForce(transform.forward*speed);
 	}
-	
+
+	/**
+	 * This is called by the swordScript and reduces the monsters hitpoints and knocks the monster back a perscribed distance
+	 * @param the amount of damage done to the monster
+	 * @param the direction which the force of the collision pushes the monster
+	 */
 	public void Hurt(float Amount, Vector3 PushDirection){
-		//Debug.Log(PushDirection);
 		health -= Amount;
 		OnScreenDisplay.PostMessage ("Hit!", Color.yellow);
 		rigidbody.AddForce(PushDirection * AttackKnockback);
+		// if the monster has under 0 hitpoints it dies and is despawned
 		if(health <= 0){
 			Destroy(gameObject);
 		}
