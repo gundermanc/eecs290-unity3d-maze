@@ -2,12 +2,19 @@
 using System.Collections;
 
 public class SwordScript : MonoBehaviour {
+	//How much damage the sword does to monsters
 	public float Damage;
+	//How fast the attack happens (effectively a sword reload time)
 	public float AttackSpeed;
+	//Timestamp of when the attack was initiated
 	private float SwipeTime;
+	//True when attacking, false otherwise
 	private bool HasAttacked;
+	//True if a monster was hit, false otherwise
 	private bool Hit;
+	//True if the sword is inside a monster, false otherwise
 	private bool sword_inside_monster;
+	//Stores the enemy to sword is killing
 	private Collider Enemy;
 
 	//Sound Effects
@@ -15,6 +22,7 @@ public class SwordScript : MonoBehaviour {
 	public AudioClip Hit1;
 	public AudioClip Hit2;
 
+	//Initializes values
 	void Start(){
 		HasAttacked = false;
 		Hit = true;
@@ -22,6 +30,7 @@ public class SwordScript : MonoBehaviour {
 		SwipeTime = 0f;
 	}
 
+	//If the sword collides with an enemy and you haven't already attacked, attack
 	void OnTriggerEnter(Collider Target) {
 		if(Target.collider.tag == "Enemy"){
 			Enemy = Target;
@@ -36,7 +45,7 @@ public class SwordScript : MonoBehaviour {
 			sword_inside_monster = true;
 		}
 	}
-
+	//Turn sword_inside_monster flag off if the sword exits the monster
 	void OnTriggerExit(Collider Target) {
 		if(Target.collider.tag == "Enemy")
 			sword_inside_monster = false;
@@ -49,6 +58,7 @@ public class SwordScript : MonoBehaviour {
 			return;
 		}
 
+		//If clicked and able to attack, attack
 		if(Input.GetMouseButtonDown(0) && Time.timeSinceLevelLoad - SwipeTime > AttackSpeed){
 			Debug.Log("Attacking");
 			SwipeTime = Time.timeSinceLevelLoad;
@@ -59,14 +69,13 @@ public class SwordScript : MonoBehaviour {
 					sword_inside_monster = false;
 				else{
 					Attack();
-					//audio.Stop();
-					//audio.PlayOneShot(Hit1);
 				}
 			} if(!sword_inside_monster) {
 				audio.Stop();
 				audio.PlayOneShot(Miss);
 			}
 		}
+		//If you are done attacking, change variables appropriately
 		if (HasAttacked == true && Time.timeSinceLevelLoad - SwipeTime > AttackSpeed){
 			HasAttacked = false;
 			Hit = true;
@@ -80,7 +89,7 @@ public class SwordScript : MonoBehaviour {
 			transform.parent.localRotation = Quaternion.Slerp(new Quaternion(0.7f, 0f, 0.2f, 0.7f), new Quaternion(0.1f, 0f, 0.2f, 1f), (Time.timeSinceLevelLoad - SwipeTime)*2f/AttackSpeed-1f);
 		}
 	}
-
+	//Damages the enemy and plays sound effect
 	private void Attack(){
 		if(Enemy != null) {
 			Enemy.transform.GetComponent<MonsterScript>().Hurt(Damage, transform.forward);
