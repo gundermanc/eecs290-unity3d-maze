@@ -45,7 +45,6 @@ public class OnScreenDisplay : MonoBehaviour {
 
 	// singleton instance reference
 	private static OnScreenDisplay instance; 
-	private DeathCallback deathCallback = null;			// defines a function called when the player dies
 
 
 	/**
@@ -159,16 +158,6 @@ public class OnScreenDisplay : MonoBehaviour {
 			instance.healthPoints = healthPoints;
 			}
 		}
-
-		// check if the main character died and dispatch handler
-		if (instance.healthPoints == 0) {
-			if(instance.deathCallback == null) {
-				Debug.LogError("Main Character death, but no Death Handler was created.");
-				return;
-			}
-
-			instance.deathCallback.PlayerDied();
-		}
 	}
 
 	/**
@@ -245,15 +234,6 @@ public class OnScreenDisplay : MonoBehaviour {
 	public static void PostMessage(object message, Color color) {
 		instance.messageQueue.AddLast(new Message(DateTime.Now, message.ToString(),
 		                                          color));
-	}
-
-	/**
-	 * Sets a death callback interface that will be called upon death of the main
-	 * character.
-	 * @param deathCallback A death callback interface
-	 */
-	public static void RegisterDeathCallback(DeathCallback deathCallback) {
-		instance.deathCallback = deathCallback;
 	}
 
 	/**
