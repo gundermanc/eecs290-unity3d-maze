@@ -25,30 +25,36 @@ public class OnScreenDisplay : MonoBehaviour {
 	private Rect batteryBarRect;				// the rectangle which the FULL battery bar will occupy
 	private Rect batteryBarBackgroundRect;		// the rectangle which the empty battery bar will occupy
 	public int messageDisplayTime = 5;			// the number of seconds to display a message
-	public Texture bloodDecalsTexture;
-	private const string gameTitle = "Marshmallow Madness";
+	public Texture bloodDecalsTexture;			// the texture for the game over blood graphics
+	private const string gameTitle = "Marshmallow Madness"; //text for the game title
 
 	// private constants
-	private const string welcomeMessage = "Will you roast the ghosts... or be squished to death by white fluffiness?";
-	private const string instructions1 = "Left click to swing your sword, right click throw throwing knives";
-	private const string instructions2 = "Press Esc to pause and M to view the minimap fullscreen.";
-	private const int pauseMenuMargins = 70;
-	private const int shadowOffset = -2;
+	private const string welcomeMessage = "Will you roast the ghosts... or be squished to death by white fluffiness?"; //Text string for the welcome message
+	private const string instructions1 = "Left click to swing your sword, right click throw throwing knives"; //Instructions on how to play the game
+	private const string instructions2 = "Press Esc to pause and M to view the minimap fullscreen."; //Instructions continued
+	private const int pauseMenuMargins = 70; //Coordinates for the rectangle used in the pause menu
+	private const int shadowOffset = -2; //Value used to draw a shadow rectangle
 
 	// private fields
-	private int healthPoints = 100;
-	private int ammoCount = 100;
-	private int maxAmmoCount = 100;
-	private int batteryLife = 100;
-	private LinkedList<Message> messageQueue;
+	private int healthPoints = 100; //Player character's health points
+	private int ammoCount = 100; //Default ammo count for throwing knives
+	private int maxAmmoCount = 100; //Maximum amount of ammo the player can have at one time
+	private int batteryLife = 100; //The value for the battery life; higher number = brighter battery
+	private LinkedList<Message> messageQueue; //A linked list containing all the queue'd messages to be displayed on screen
 
 	// singleton instance reference
-	private static OnScreenDisplay instance;
+	private static OnScreenDisplay instance; 
 	private DeathCallback deathCallback = null;			// defines a function called when the player dies
 
 
 	// Use this for initialization
 	void Start () {
+		/* Initializes the various bars to help you keep track of HP, Ammo, and Battery
+		 * The "x" and "y" refer to the top-left co-ordinates of any rectangle
+		 * The "width" and "height" refer to the actual size of the rectangle
+		 * Each bar has both a rectangle for the actual meter as well as one for the background behind the bar
+		 */
+
 		healthBarRect.x = 17;
 		healthBarRect.y = 20;
 		healthBarRect.width = 155; 
@@ -84,23 +90,23 @@ public class OnScreenDisplay : MonoBehaviour {
 
 		// draw the GUI appropriate for the current situation
 		switch(GameManager.GetGameMode()) {
-		case GameManager.GameMode.Paused:
-			DrawPauseMenu();
+		case GameManager.GameMode.Paused: //If the game mode is paused
+			DrawPauseMenu();			  //Draw the pause menu
 			break;
 		case GameManager.GameMode.StartMenu:
-			DrawGameStart(gameTitle);
+			DrawGameStart(gameTitle);	  //Draw the start menu
 			break;
-		case GameManager.GameMode.Dead:
+		case GameManager.GameMode.Dead:   //Draw the "game over" screen
 			DrawBloodDecals ();
 			DrawWinScreen("You died you <b>SCRUB!</b>");
 			break;
-		case GameManager.GameMode.UnPaused:
+		case GameManager.GameMode.UnPaused: //Draw the usual display for when the game is unpaused and is being played
 			DrawHUD();
 			break;
-		case GameManager.GameMode.EndLevel:
+		case GameManager.GameMode.EndLevel: //Draw the screen for when a level is won (the end of the maze is reached)
 			DrawWinLevelScreen();
 			break;
-		case GameManager.GameMode.EndGame:
+		case GameManager.GameMode.EndGame: //Draw the screen that congratulates the player for when all levels have been completed
 			DrawWinScreen("Congratulations! You beat all of the levels.");
 			break;
 		}
@@ -113,12 +119,14 @@ public class OnScreenDisplay : MonoBehaviour {
 			return;
 		}
 
+		//Otherwise, slowly remove messages from message log
 		DiscardMessages ();
 	}
 
 	/**
 	 * Sets the health points values in the onscreen display. If the player dies
 	 * because of this health change, the deathCallback function is called.
+	 * It also ensures the health does not go above the max health (100).
 	 * @param healthPoints A value between 0 and 100
 	 * @param addToExistingValue If true, the function adds healthPoints to
 	 * the existing health points. If false, the old value is thrown out and
@@ -171,6 +179,10 @@ public class OnScreenDisplay : MonoBehaviour {
 		instance.ammoCount = ammo;
 	}
 
+	/** Sets the max ammo count for the OnScreenDisplay
+	 * @param maxAmmoCount The new maximum amount of ammo the player can have
+	 */
+
 	public static void SetMaxAmmoCount(int maxAmmoCount) {
 		instance.maxAmmoCount = maxAmmoCount;
 	}
@@ -211,9 +223,18 @@ public class OnScreenDisplay : MonoBehaviour {
 		}
 	}
 
+	/* Post a message given only the message to post: simply uses default color (white)
+	 * @param message the message to add to the messageQueue, which will be converted to a string
+	 */
+
 	public static void PostMessage(object message) {
 		PostMessage (message, new Color (1.0f, 1.0f, 1.0f, 1.0f));
 	}
+
+	/* Post a message given both the message to post and a color for the message to be in
+	 * @param message the message to add to the messageQueue, which will be converted to a string
+	 * @param color the value of the color the text should use
+	 */
 
 	public static void PostMessage(object message, Color color) {
 		instance.messageQueue.AddLast(new Message(DateTime.Now, message.ToString(),
@@ -223,13 +244,17 @@ public class OnScreenDisplay : MonoBehaviour {
 	/**
 	 * Sets a death callback interface that will be called upon death of the main
 	 * character.
+	 * @param deathCallback A death callback interface
 	 */
 	public static void RegisterDeathCallback(DeathCallback deathCallback) {
 		instance.deathCallback = deathCallback;
 	}
 
+	/* Create a label GUI style that is upper left justified
+	 * Draw the health, ammo, and battery bars, as well as draw the messages and the level name
+	 */
+
 	private void DrawHUD() {
-		// create a label GUI style that is upper left justified
 		GUIStyle regularStyle = GUI.skin.GetStyle ("Label");
 		regularStyle.alignment = TextAnchor.UpperLeft;
 
@@ -240,10 +265,15 @@ public class OnScreenDisplay : MonoBehaviour {
 		DrawLevelName ();
 	}
 
+	/* Draw the blood decals, used for the game over screen */
 	private void DrawBloodDecals() {
 		GUI.DrawTexture (new Rect (0, 0, Screen.width, Screen.height), bloodDecalsTexture);
 	}
 
+	/* Wraps GUI.Label text with a shadow 
+	 * @param labelPos is the position of the label which is offset by shadowOffset
+	 * @param label is the actual string we are drawing the shadow for
+	 */
 	private void DrawLabelWithShadow(Rect labelPos, string label) {
 
 		// translate rect for shadow
@@ -260,6 +290,7 @@ public class OnScreenDisplay : MonoBehaviour {
 		GUI.Label (labelPos, label);
 	}
 
+	/* Draws the pause menu	*/
 	private void DrawPauseMenu() {
 
 		// create a label GUI style that is centered
@@ -290,6 +321,9 @@ public class OnScreenDisplay : MonoBehaviour {
 		}
 	}
 
+	/* Draws the start menu
+	 * @param message is meant to be the string containing the game title
+	 */
 	private void DrawGameStart(string message) {
 		// create a label GUI style that is centered
 		GUIStyle centeredStyle = GUI.skin.GetStyle ("Label");
@@ -325,6 +359,7 @@ public class OnScreenDisplay : MonoBehaviour {
 		                     + String.Format(instructions2, message) + "</i></size>");
 	}
 
+	/* Draws the screen shown upon winning a level */
 	private void DrawWinLevelScreen() {
 		
 		// create a label GUI style that is centered
@@ -359,6 +394,9 @@ public class OnScreenDisplay : MonoBehaviour {
 		}
 	}
 
+	/* Draws the screen shown upon beating all levels
+	 * @param message The message shown on the win screen (e.g. a congratulations message).
+	 */
 	private void DrawWinScreen(string message) {
 		
 		// create a label GUI style that is centered
@@ -392,6 +430,7 @@ public class OnScreenDisplay : MonoBehaviour {
 		}
 	}
 
+	/* Draws the name of the level */
 	private void DrawLevelName() {
 		
 		// create a label GUI style that is centered
@@ -410,6 +449,7 @@ public class OnScreenDisplay : MonoBehaviour {
 	}
 
 
+	/* Draws the health bar, including the actual value of the health on the health bar, and the health bar background */
 	private void DrawHealthBar() {
 
 		// draw background
@@ -429,6 +469,7 @@ public class OnScreenDisplay : MonoBehaviour {
 		GUI.color = Color.white;
 	}
 
+	/*Draws the battery bar, similar to the health bar */
 	private void DrawBatteryBar() {
 		
 		// draw background
@@ -448,6 +489,7 @@ public class OnScreenDisplay : MonoBehaviour {
 		GUI.color = Color.white;
 	}
 
+	/*Draws the ammo bar, similar to the others */
 	private void DrawAmmoBar() {
 		
 		// draw background
@@ -467,6 +509,7 @@ public class OnScreenDisplay : MonoBehaviour {
 		GUI.color = Color.white;
 	}
 
+	/* Draws the messages from the messageQueue onto the left of the screen */
 	private void DrawMessages() {
 		float y = 150;
 
@@ -479,6 +522,7 @@ public class OnScreenDisplay : MonoBehaviour {
 		}
 	}
 
+	/* Discards messages after a certain time has passed, fading them out slowly */
 	private void DiscardMessages() {
 		if (messageQueue.Count > 0) {
 /*			Message message = messageQueue.First.Value;*/
@@ -499,7 +543,7 @@ public class OnScreenDisplay : MonoBehaviour {
 	public interface DeathCallback {
 		void PlayerDied();
 	}
-
+	
 	private class Message {
 		public DateTime submitTime;
 		public string message;

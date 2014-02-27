@@ -13,29 +13,46 @@ using System.Collections.Generic;
  * Contact: MinoruTono@Gmail.com
  */ 
 public class GridCreator : MonoBehaviour {
-	
+	// This is the prefab being used to create the maze out of cell blocks
 	public Transform CellPrefab;
+	// This is the maze grid comprised of an array of cell blocks
 	public Transform[,] Grid;
+	// This is a grid comprised of an array of cell blocks used to create the minimap structure
 	public static Transform[,] MiniMap;
+	// Used to toggle full screen mode for the minimap
 	public bool MMFullScreen = false;
+	// Specific location of the block that ends the level
 	public static Transform GoalBlock;
+	// This is a container to put the minimap cells into so the hierarchy doesnt get too cluttered
 	public GameObject MMContainer;
+	// This is the monster prefab that will be spawned in the levels as the badguys
 	public GameObject Monster;
+	// This is the container for all the monsters so the hierarchy doesnt get too cluttered
 	public GameObject Monsters;
+	// This is a container for all powerups so the hierarchy doesnt get too cluttered
 	public GameObject PowerUps;
+	// This is the Battery prefab that will be used to spawn batterys in the map
 	public GameObject Battery;
+	// This is the Medpack prefab that will be used to spawn medpacks in the map
 	public GameObject Medpack;
 
+	// This is the closest distance monsters are allowed to spawn to the player
 	public float monsterStartingDistance = 5;
 
-	// part of the leveling system
+	// This is the size of the grid
 	public Vector3 Size;
+	// This is the probability a medpack will spawn
 	public int MedpackSpwanProb;
+	// This is the probability a battery will spawn
 	public int BatterySpawnProb;
+	// These are the various matterials that will be used for the wall and floors of the map
 	public Material WallMat, FloorMat;
+	// This is the proability a monster will spawn
 	public int MonsterSpawnProb;
+	// This is the scaling for the level prefabs and grid creator
 	public float scaling;
 
+	// This is the randomized probability for things
 	private int DiceRoll;
 
 	// Use this for initialization
@@ -252,15 +269,6 @@ public class GridCreator : MonoBehaviour {
 				PathCells[PathCells.Count - 1].transform.localScale = new Vector3(PathCells[PathCells.Count - 1].transform.localScale.x,1,PathCells[PathCells.Count - 1].transform.localScale.z);
 				GoalBlock = PathCells[PathCells.Count - 1];
 
-				//For Testing potential spawn locations
-				//for(int i=0; i<15; i++){
-				//foreach(Transform cell in PathCells.Take(50)){
-				//	cell.renderer.material.color = Color.red;
-					//PathCells[PathCells.Count - i].transform.localScale = new Vector3(1,1,1);
-				//}
-
-
-
 				foreach (Transform cell in Grid) {
 					// Removes displayed weight
 					cell.GetComponentInChildren<TextMesh>().renderer.enabled = false;
@@ -281,26 +289,42 @@ public class GridCreator : MonoBehaviour {
 			AdjSet[lowestList].Remove(next);
 		} while (next.GetComponent<CellScript>().AdjacentsOpened >= 2);	// This keeps the walls in the grid, otherwise Prim's Algorithm would just visit every cell
 
-		// GOT SOME JOHN HACKS GOING ON RIGHT HERE!!!! ###################################################################
+		/*
+		 * This section is for spawning objects in the maze
+		 * We are spwaning objects only over path cells, which is why this code is going here where path cells are being created one by one
+		 * The first thing we do is create a random variable that we will use to compare results against spawning probablities set earlier
+		 * We then create a game object which will be the next monster if a monster will spawn, and a transform for a positional location
+		 */
 		DiceRoll = Random.Range(0,100);
 		GameObject NextMonster;
 		Vector3 location = new Vector3(next.transform.localPosition.x, 3f, next.transform.localPosition.z);
 
-		// check probability of monster spawn AND CHRISTIAN's Monster distance from starting position.
-		// this prevents you from being mobbed at start
+		/*
+		 * We also need to starting position of the player so monsters will not spawn directly on the player
+		 * or very close to the player, so they can not be imediately attacked.
+		 */
 		Vector3 startingPos = new Vector3 (0, 0, 0);
 
+		/*
+		 * We compare the dice roll to the probability a monster will spawn AND
+		 * we need to check the distance is further away than the monsterStartingDistance we set eariler AND
+		 * the monsters are not in line of sight of the player
+		 */
 		if((DiceRoll > (100 - MonsterSpawnProb))
 		   && Vector3.Distance(location, startingPos) >= monsterStartingDistance
 		   && !lineOfSight(location, startingPos)) {
+			// If all of these conditions are satisfied, then we can spawn a monster in this tile position
 			NextMonster = Instantiate(Monster, location, Quaternion.identity) as GameObject;
+			// We put the monster as a child of the Monsters object so we dont get a bunch of clones in the build hierarchy
 			NextMonster.transform.parent = Monsters.transform;
+			// If a monster doesnt spawn, we reroll a dice and attempt to create a battery in a similar manner
 		} else {
 			DiceRoll = Random.Range(0,100);
 			GameObject NextBattery;
 			if(DiceRoll > (100 - BatterySpawnProb)){
 				NextBattery = Instantiate(Battery, next.transform.position, Quaternion.identity) as GameObject;
 				NextBattery.transform.parent = PowerUps.transform;
+				// If the battery doesnt spawn, we reroll again and attempt to spawn a medpack
 			} else {
 				DiceRoll = Random.Range(0,100);
 				GameObject NextMedpack;
@@ -311,7 +335,7 @@ public class GridCreator : MonoBehaviour {
 			}
 		}
 
-		// The 'next' transform's material color becomes white.
+		// The 'next' transform's material color becomes white. And the scale is as big as we want it
 		next.renderer.material = FloorMat;
 		next.renderer.material.color = Color.white;
 		next.transform.localScale = new Vector3(next.transform.localScale.x,1,next.transform.localScale.z);
