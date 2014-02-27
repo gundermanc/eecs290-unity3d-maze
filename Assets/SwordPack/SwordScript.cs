@@ -21,9 +21,11 @@ public class SwordScript : MonoBehaviour {
 	/** Stores the enemy to sword is killing */
 	private Collider Enemy;
 
-	//Sound Effects
+	/** Sword whiff sound effect */
 	public AudioClip Miss;
+	/** Sword hitting monster sound effect */
 	public AudioClip Hit1;
+	/** Alternate sound for hitting */
 	public AudioClip Hit2;
 
 	/**
