@@ -43,7 +43,7 @@ public class MonsterScript : MonoBehaviour {
 		if(GameManager.IsPaused()) {
 			return;
 		}
-
+		// This rotates the mouth of the monster back from the open position
 		if(MouthOpen && Time.timeSinceLevelLoad - last_attack > .3f){
 			MouthTransform.Rotate(-30f,0f,0f);
 			MouthOpen = false;
@@ -53,15 +53,19 @@ public class MonsterScript : MonoBehaviour {
 		Vector3 dir = ((new Vector3(transform.position.x,transform.position.y +YaxisOffset, transform.position.z)) - target.transform.position).normalized*-1;
 		Vector3 endPoint = origin + dir * sight;
 
+		// This raycasts toward the player
 		if(Physics.Raycast(transform.position, dir, out SeenObject, sight)){
 			transform.LookAt(target.transform.position);
 			endPoint = SeenObject.point;
 
+			// If the raycast collides with the player, but the player is not in attack range then move in the player direction
 			if(SeenObject.collider.tag == "Player"){
 				if(Dist(gameObject, target) > attack_dist)
 					rigidbody.AddForce(dir*speed);
+				// else attack player
 				else
 					Attack();
+				// if the raycast collides with the wall then patrol
 			} else if(SeenObject.collider.tag == "Wall"){
 				Patrol(SeenObject);
 			}
