@@ -4,7 +4,8 @@ using System;
 using System.Text;
 
 /**
- * A singleton class for the on screen display for our game.
+ * Handles the rendering of all GUI elements, HUD elements, pause screen, menus,
+ * etc.
  * @author Christian Gunderman
  */
 public class OnScreenDisplay : MonoBehaviour {
@@ -47,7 +48,9 @@ public class OnScreenDisplay : MonoBehaviour {
 	private DeathCallback deathCallback = null;			// defines a function called when the player dies
 
 
-	// Use this for initialization
+	/**
+	 * Run at initialization
+	 */
 	void Start () {
 		/* Initializes the various bars to help you keep track of HP, Ammo, and Battery
 		 * The "x" and "y" refer to the top-left co-ordinates of any rectangle
@@ -86,9 +89,12 @@ public class OnScreenDisplay : MonoBehaviour {
 		messageQueue = new LinkedList<Message> ();
 	}
 
+	/**
+	 * Draws the GUI elements pertaining to the current game state.
+	 */
 	void OnGUI () {
 
-		// draw the GUI appropriate for the current situation
+		// draw the GUI appropriate for the current game state.
 		switch(GameManager.GetGameMode()) {
 		case GameManager.GameMode.Paused: //If the game mode is paused
 			DrawPauseMenu();			  //Draw the pause menu
@@ -179,10 +185,10 @@ public class OnScreenDisplay : MonoBehaviour {
 		instance.ammoCount = ammo;
 	}
 
-	/** Sets the max ammo count for the OnScreenDisplay
+	/** 
+	 * Sets the max ammo count for the OnScreenDisplay
 	 * @param maxAmmoCount The new maximum amount of ammo the player can have
 	 */
-
 	public static void SetMaxAmmoCount(int maxAmmoCount) {
 		instance.maxAmmoCount = maxAmmoCount;
 	}
@@ -223,19 +229,19 @@ public class OnScreenDisplay : MonoBehaviour {
 		}
 	}
 
-	/* Post a message given only the message to post: simply uses default color (white)
+	/**
+	 * Post a message given only the message to post: simply uses default color (white)
 	 * @param message the message to add to the messageQueue, which will be converted to a string
 	 */
-
 	public static void PostMessage(object message) {
 		PostMessage (message, new Color (1.0f, 1.0f, 1.0f, 1.0f));
 	}
 
-	/* Post a message given both the message to post and a color for the message to be in
+	/**
+	 * Post a message given both the message to post and a color for the message to be in
 	 * @param message the message to add to the messageQueue, which will be converted to a string
 	 * @param color the value of the color the text should use
 	 */
-
 	public static void PostMessage(object message, Color color) {
 		instance.messageQueue.AddLast(new Message(DateTime.Now, message.ToString(),
 		                                          color));
@@ -250,10 +256,9 @@ public class OnScreenDisplay : MonoBehaviour {
 		instance.deathCallback = deathCallback;
 	}
 
-	/* Create a label GUI style that is upper left justified
-	 * Draw the health, ammo, and battery bars, as well as draw the messages and the level name
+	/**
+	 * Draw the game Heads up display.
 	 */
-
 	private void DrawHUD() {
 		GUIStyle regularStyle = GUI.skin.GetStyle ("Label");
 		regularStyle.alignment = TextAnchor.UpperLeft;
@@ -265,12 +270,15 @@ public class OnScreenDisplay : MonoBehaviour {
 		DrawLevelName ();
 	}
 
-	/* Draw the blood decals, used for the game over screen */
+	/**
+	 * Draw the blood decals, used for the game over screen 
+	 */
 	private void DrawBloodDecals() {
 		GUI.DrawTexture (new Rect (0, 0, Screen.width, Screen.height), bloodDecalsTexture);
 	}
 
-	/* Wraps GUI.Label text with a shadow 
+	/**
+	 * Wraps GUI.Label function to provide shadows.
 	 * @param labelPos is the position of the label which is offset by shadowOffset
 	 * @param label is the actual string we are drawing the shadow for
 	 */
@@ -290,7 +298,9 @@ public class OnScreenDisplay : MonoBehaviour {
 		GUI.Label (labelPos, label);
 	}
 
-	/* Draws the pause menu	*/
+	/**
+	 * Draws the pause menu	labels and GUI.
+	 */
 	private void DrawPauseMenu() {
 
 		// create a label GUI style that is centered
@@ -321,8 +331,9 @@ public class OnScreenDisplay : MonoBehaviour {
 		}
 	}
 
-	/* Draws the start menu
-	 * @param message is meant to be the string containing the game title
+	/**
+	 * Draws the start menu GUI.
+	 * @param message is the message displayed on the start screen.
 	 */
 	private void DrawGameStart(string message) {
 		// create a label GUI style that is centered
@@ -359,7 +370,9 @@ public class OnScreenDisplay : MonoBehaviour {
 		                     + String.Format(instructions2, message) + "</i></size>");
 	}
 
-	/* Draws the screen shown upon winning a level */
+	/**
+	 * Draws the GUI for winning a level.
+	 */
 	private void DrawWinLevelScreen() {
 		
 		// create a label GUI style that is centered
@@ -385,6 +398,7 @@ public class OnScreenDisplay : MonoBehaviour {
 			GameManager.NextLevel();
 		}
 
+		// quit game button
 		screenDimensions.y += 150;
 		screenDimensions.yMax = screenDimensions.y + 75;
 		if (GUI.Button (screenDimensions, "<size=30>Quit Game</size>")) {
@@ -394,7 +408,8 @@ public class OnScreenDisplay : MonoBehaviour {
 		}
 	}
 
-	/* Draws the screen shown upon beating all levels
+	/**
+	 * Draws the screen shown upon beating all levels or dying.
 	 * @param message The message shown on the win screen (e.g. a congratulations message).
 	 */
 	private void DrawWinScreen(string message) {
@@ -430,7 +445,9 @@ public class OnScreenDisplay : MonoBehaviour {
 		}
 	}
 
-	/* Draws the name of the level */
+	/**
+	 * Draws the name of the level across top of screen.
+	 */
 	private void DrawLevelName() {
 		
 		// create a label GUI style that is centered
@@ -449,7 +466,10 @@ public class OnScreenDisplay : MonoBehaviour {
 	}
 
 
-	/* Draws the health bar, including the actual value of the health on the health bar, and the health bar background */
+	/**
+	 * Draws the health bar, including the actual value of the health on the 
+	 * health bar, and the health bar background 
+	 */
 	private void DrawHealthBar() {
 
 		// draw background
@@ -469,7 +489,9 @@ public class OnScreenDisplay : MonoBehaviour {
 		GUI.color = Color.white;
 	}
 
-	/*Draws the battery bar, similar to the health bar */
+	/**
+	 * Draws the battery life percentage bar for the HUD
+	 */
 	private void DrawBatteryBar() {
 		
 		// draw background
@@ -489,7 +511,9 @@ public class OnScreenDisplay : MonoBehaviour {
 		GUI.color = Color.white;
 	}
 
-	/*Draws the ammo bar, similar to the others */
+	/**
+	 * Draws the ammo bar for the HUD
+	 */
 	private void DrawAmmoBar() {
 		
 		// draw background
@@ -509,7 +533,9 @@ public class OnScreenDisplay : MonoBehaviour {
 		GUI.color = Color.white;
 	}
 
-	/* Draws the messages from the messageQueue onto the left of the screen */
+	/**
+	 * Draws the messages posted with PostMessage to the screen.
+	 */
 	private void DrawMessages() {
 		float y = 150;
 
@@ -522,7 +548,13 @@ public class OnScreenDisplay : MonoBehaviour {
 		}
 	}
 
-	/* Discards messages after a certain time has passed, fading them out slowly */
+	/**
+	 * Iterates through the list of messages posted with PostMessage.
+	 * For each message, the message state is updated. If it has been
+	 * in the queue for messageDisplayTime, the system begins reducing
+	 * the alpha for the current message until it disappears and is removed
+	 * from the queue.
+	 */
 	private void DiscardMessages() {
 		if (messageQueue.Count > 0) {
 /*			Message message = messageQueue.First.Value;*/
@@ -540,15 +572,23 @@ public class OnScreenDisplay : MonoBehaviour {
 		}
 	}
 
-	public interface DeathCallback {
-		void PlayerDied();
-	}
-	
+	/**
+	 * Defines a message that can be posted to the screen using PostMessage().
+	 */
 	private class Message {
+		/** The time the message was submitted. */
 		public DateTime submitTime;
+		/** The message to display onscreen. */
 		public string message;
+		/** The color of the text */
 		public Color color;
 
+		/**
+		 * Constructs an instance.
+		 * @param submitTime The time the message was submitted.
+		 * @param message The message text.
+		 * @param color The color to draw the text.
+		 */
 		public Message(DateTime submitTime, string message, Color color) {
 			this.submitTime = submitTime;
 			this.message = message;
