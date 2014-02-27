@@ -1,20 +1,24 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/**
+ * Handles attacking with the player's sword.
+ * @authors Kai Smith, John Billingsley
+ */
 public class SwordScript : MonoBehaviour {
-	//How much damage the sword does to monsters
+	/** How much damage the sword does to monsters */
 	public float Damage;
-	//How fast the attack happens (effectively a sword reload time)
+	/** How fast the attack happens (effectively a sword reload time) */
 	public float AttackSpeed;
-	//Timestamp of when the attack was initiated
+	/** Timestamp of when the attack was initiated */
 	private float SwipeTime;
-	//True when attacking, false otherwise
+	/** True when attacking, false otherwise */
 	private bool HasAttacked;
-	//True if a monster was hit, false otherwise
+	/** True if a monster was hit, false otherwise */
 	private bool Hit;
-	//True if the sword is inside a monster, false otherwise
+	/** True if the sword is inside a monster, false otherwise */
 	private bool sword_inside_monster;
-	//Stores the enemy to sword is killing
+	/** Stores the enemy to sword is killing */
 	private Collider Enemy;
 
 	//Sound Effects
@@ -22,7 +26,9 @@ public class SwordScript : MonoBehaviour {
 	public AudioClip Hit1;
 	public AudioClip Hit2;
 
-	//Initializes values
+	/**
+	 * Script initialization. This is called by unity on object creation.
+	 */
 	void Start(){
 		HasAttacked = false;
 		Hit = true;
@@ -30,7 +36,10 @@ public class SwordScript : MonoBehaviour {
 		SwipeTime = 0f;
 	}
 
-	//If the sword collides with an enemy and you haven't already attacked, attack
+	/**
+	 * If the sword collides with an enemy and you haven't already attacked, attack.
+	 * @param Target The collider of the object that entered the trigger
+	 */
 	void OnTriggerEnter(Collider Target) {
 		if(Target.collider.tag == "Enemy"){
 			Enemy = Target;
@@ -38,19 +47,28 @@ public class SwordScript : MonoBehaviour {
 				Attack();
 		}
 	}
-	//In order to deal with attacks where the sword is already in the monster and stays in.
+	/**
+	 * In order to deal with attacks where the sword is already in the monster and stays in.
+	 * @param Target The collider of the object that stayed in the trigger
+	 */
 	void OnTriggerStay(Collider Target) {
 		if(Target.collider.tag == "Enemy"){
 			Enemy = Target;
 			sword_inside_monster = true;
 		}
 	}
-	//Turn sword_inside_monster flag off if the sword exits the monster
+	/**
+	 * Turn sword_inside_monster flag off if the sword exits the monster
+	 * @param Target The collider of the object that exited the trigger
+	 */
 	void OnTriggerExit(Collider Target) {
 		if(Target.collider.tag == "Enemy")
 			sword_inside_monster = false;
 	}
 
+	/**
+	 * Called once per frame by unity. Handles initializing attacks and sword animations.
+	 */
 	void Update(){
 
 		// do nothing if the game is paused
@@ -89,7 +107,9 @@ public class SwordScript : MonoBehaviour {
 			transform.parent.localRotation = Quaternion.Slerp(new Quaternion(0.7f, 0f, 0.2f, 0.7f), new Quaternion(0.1f, 0f, 0.2f, 1f), (Time.timeSinceLevelLoad - SwipeTime)*2f/AttackSpeed-1f);
 		}
 	}
-	//Damages the enemy and plays sound effect
+	/**
+	 * Damages the enemy and plays sound effect
+	 */
 	private void Attack(){
 		if(Enemy != null) {
 			Enemy.transform.GetComponent<MonsterScript>().Hurt(Damage, transform.forward);

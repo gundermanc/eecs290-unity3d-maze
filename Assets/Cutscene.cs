@@ -1,26 +1,32 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/**
+ * Handles the game-winning cutscene.
+ * @author Kai Smith
+ */
 public class Cutscene : MonoBehaviour {
 
-	//When the cutscene starts, how long does it take to zoom all the way out
+	/** How long it takes to zoom all the way out */
 	public float time_to_zoom;
-	//How much thecutscene zooms
+	/** How much the cutscene zooms */
 	public float zoom;
-	//The actual Camera object
+	/** The actual Camera object */
 	private Camera cam;
-	//The transform associated by the camera
+	/** The transform associated by the camera */
 	private Transform cam_transform;
-	//True when the cutscene is going on, false otherwise
+	/** True when the cutscene is going on, false otherwise */
 	private static bool animate;
-	//Vector3 position for the cutscene camera to start at
+	/** Vector3 position for the cutscene camera to start at */
 	private Vector3 start;
-	//Ending position of the cutscene camera
+	/** Ending position of the cutscene camera */
 	private Vector3 end;
-	//Stores the time at which the maze was completed.
+	/** Stores the time at which the maze was completed. */
 	public float time_to_complete;
 
-	// Use this for initialization
+	/**
+	 * Script initialization. This is called by unity on object creation.
+	 */
 	void Start () {
 		cam = GameObject.Find ("CutsceneCam").GetComponent<Camera> ();
 		time_to_complete = 0f;
