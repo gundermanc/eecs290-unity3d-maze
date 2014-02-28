@@ -1,7 +1,8 @@
 A collaborative project for Case Western Reserve University's EECS 290
 class.
 
-Project Requirements:
+
+Project Features:
 * Develop maze game in Unity 3D
 * Add first person shooting and swords
 * Start game screen
@@ -17,6 +18,15 @@ Project Requirements:
 * Sound Effects
 * Attack feedback
 * etc.
+
+
+Group Members:
+Kai Smith
+John Billingsley
+Christian Gunderman
+Masroor Qutubuddin
+Evan Johnson
+Marc Buchner
 
 
 Project has reached completion.
