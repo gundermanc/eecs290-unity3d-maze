@@ -69,8 +69,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 063591184160f43a2a1007c330a665b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BatteryCharge: .5
-  BatteryRangeIncrease: 1
   RotationAngle: 1
 --- !u!136 &13600000
 CapsuleCollider:
@@ -81,8 +79,8 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: .5
-  m_Height: 2
+  m_Radius: 1.39999998
+  m_Height: 2.79999995
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &100100000
