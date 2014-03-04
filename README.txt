@@ -27,7 +27,6 @@ Christian Gunderman
 Masroor Qutubuddin
 Evan Johnson
 Scott McHenry
-Marc Buchner
 
 
 Project has reached completion.
